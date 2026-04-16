@@ -1,0 +1,25 @@
+---
+- name: Deploy static site
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Copy HTML file to nginx web root
+      copy:
+        src: ../app/index.html
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Ensure nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Verify site is reachable
+      uri:
+        url: "http://{{ ansible_host }}"
+        status_code: 200
+      delegate_to: localhost
