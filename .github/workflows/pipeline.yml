@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Ansible
         run: |
@@ -39,4 +39,4 @@ jobs:
             -e "ansible_ssh_private_key_file=/tmp/deploy_key.pem"
 
       - name: Print success
-        run: echo "✅ Deployed build #${{ github.run_number }} to http://${{ secrets.SERVER_IP }}"
+        run: echo "Deployed build ${{ github.run_number }} to http://${{ secrets.SERVER_IP }}"
