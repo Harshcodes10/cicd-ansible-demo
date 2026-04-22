@@ -20,13 +20,17 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | tr -d ' ' | base64 -d > /tmp/deploy_key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > /tmp/deploy_key.pem
           chmod 600 /tmp/deploy_key.pem
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP_1 }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP_2 }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP_3 }} >> ~/.ssh/known_hosts
 
-      - name: Update inventory with server IP
+      - name: Update inventory with server IPs
         run: |
-          sed -i "s/YOUR_SERVER_IP/${{ secrets.SERVER_IP }}/g" ansible/inventory.ini
+          sed -i "s/YOUR_SERVER_IP_1/${{ secrets.SERVER_IP_1 }}/g" ansible/inventory.ini
+          sed -i "s/YOUR_SERVER_IP_2/${{ secrets.SERVER_IP_2 }}/g" ansible/inventory.ini
+          sed -i "s/YOUR_SERVER_IP_3/${{ secrets.SERVER_IP_3 }}/g" ansible/inventory.ini
 
       - name: Inject build number into HTML
         run: |
@@ -39,4 +43,4 @@ jobs:
             -e "ansible_ssh_private_key_file=/tmp/deploy_key.pem"
 
       - name: Print success
-        run: echo "Deployed build ${{ github.run_number }} to http://${{ secrets.SERVER_IP }}"
+        run: echo "Deployed build ${{ github.run_number }} to all 3 servers"
