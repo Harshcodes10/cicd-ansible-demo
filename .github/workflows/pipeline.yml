@@ -18,11 +18,11 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Set up SSH key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > /tmp/deploy_key.pem
+          cat << 'SSHKEY' > /tmp/deploy_key.pem
+          ${{ secrets.SSH_PRIVATE_KEY }}
+          SSHKEY
           chmod 600 /tmp/deploy_key.pem
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
